@@ -17,28 +17,30 @@ public class FileConverter {
         
         File file = new File(path);
         if (file.exists()) {
-            BufferedReader r = new BufferedReader(new FileReader(file));
-            String line = null;
-            final Map<String, Cell> cells = new HashMap<>();
-            int lengthOfLine = 0;
-            int row = 0;
-            while ((line = r.readLine()) != null) {
-                lengthOfLine = line.length();
-                for (int i = 0; i < line.length(); i++) {
-                    Cell cell = new Cell(row, i);
-                    char charAt = line.charAt(i);
-                    if (charAt == '*') {
-                        cell.setAlive(true);
+            try (BufferedReader r = new BufferedReader(new FileReader(file))) {
+                
+                String line = null;
+                final Map<String, Cell> cells = new HashMap<>();
+                int lengthOfLine = 0;
+                int row = 0;
+                while ((line = r.readLine()) != null) {
+                    lengthOfLine = line.length();
+                    for (int i = 0; i < line.length(); i++) {
+                        Cell cell = new Cell(row, i);
+                        char charAt = line.charAt(i);
+                        if (charAt == '*') {
+                            cell.setAlive(true);
+                        }
+                        cells.put(cell.getKey(), cell);
                     }
-                    cells.put(cell.getKey(), cell);
+                    row++;
                 }
-                row++;
+                GameOfLifeGrid gameOfLifeGrid = new GameOfLifeGrid(row, lengthOfLine, cells);
+                return gameOfLifeGrid;
             }
-            GameOfLifeGrid gameOfLifeGrid = new GameOfLifeGrid(row, lengthOfLine, cells);
-            return gameOfLifeGrid;
+            
         } else {
             throw new FileNotFoundException("file named " + path + " not found!");
         }
     }
-    
 }
